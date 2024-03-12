@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { LightBallIcon } from 'assets';
 import cx from 'clsx';
 import { BikeData } from 'interface/bikeData.interface';
-import { useNavigate } from 'react-router-dom';
+import { randomNumber } from 'utils';
 import * as xlsx from 'xlsx';
 
 import styles from './home.module.scss';
@@ -16,9 +16,8 @@ interface Targets {
 }
 
 const Home: React.FC = () => {
-  const navigate = useNavigate();
   const [isActive, setIsActive] = useState<boolean>(false);
-  // const [rawData, setRawData] = useState<BikeData[]>([]);
+
   const [data, setData] = useState<[string, string, string]>(['', '', '']);
   const [targets, setTargets] = useState<Targets>({
     first: ['따'],
@@ -29,20 +28,64 @@ const Home: React.FC = () => {
 
   const isSuccess = Boolean(data) && !isLoading;
 
-  // const onReset = (jsonData: BikeData[]) => {
-  //   const { location: rawLocation } =
-  //     jsonData[randomNumber(0, jsonData.length - 1)];
-  //   const location = filterLocation(rawLocation);
-  //   setData([
-  //     location[0] || '',
-  //     location[1] || '',
-  //     location.length > 3 ? location.slice(2).join(',') : location[2] ?? '',
-  //   ]);
-  // };
-
   const onClickStick = () => {
-    navigate('result');
+    if (isActive && isLoading) {
+      return;
+    }
+    if (isActive) {
+      setIsLoading(true);
+      setIsActive(false);
+    } else {
+      setIsActive(true);
+
+      setTimeout(() => {
+        const index = randomNumber(0, targets.first.length - 1);
+
+        setData([
+          targets.first[index],
+          targets.second[index],
+          targets.third[index],
+        ]);
+        setIsLoading(false);
+      }, 2_000);
+    }
   };
+
+  useEffect(() => {
+    // xlsx.set_fs(fs);
+    fetch('defend.xlsx', {})
+      .then((data) => data.arrayBuffer())
+      .then((data) => {
+        const excelFile = xlsx.read(data, {
+          type: 'binary',
+        }) as any;
+
+        const sheetName = excelFile.SheetNames[0];
+
+        const firstSheet = excelFile.Sheets[sheetName];
+        const jsonData = xlsx.utils
+          .sheet_to_json<BikeData>(firstSheet, {
+            defval: '',
+          })
+          .map((data: any) => data['__EMPTY_3'] as string);
+        jsonData
+          .map((data) => filterLocation(data))
+          .forEach((location) =>
+            setTargets((prev) => {
+              return {
+                first: [...prev.first, location[0] ?? ''],
+                second: [...prev.second, location[1] ?? ''],
+                third: [
+                  ...prev.third,
+                  location.length > 3
+                    ? location.slice(2).join(',')
+                    : location[2] ?? '',
+                ],
+              };
+            }),
+          );
+      });
+  }, []);
 
   return (
     <section className={styles.wrapper}>
