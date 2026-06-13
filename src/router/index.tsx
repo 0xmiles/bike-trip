@@ -1,5 +1,5 @@
 import { Layout } from 'components';
-import { HomePage, ResultPage } from 'pages';
+import { HomePage } from 'pages';
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -9,7 +9,6 @@ import {
 const router = (
   <Route element={<Layout />}>
     <Route path="/" element={<HomePage />} />
-    <Route path="/result" element={<ResultPage />} />
     <Route path="*" element={<HomePage />} />
   </Route>
 );

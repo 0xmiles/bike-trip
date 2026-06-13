@@ -1,0 +1,137 @@
+@use 'src/styles/constants' as c;
+@use 'src/styles/mixins' as m;
+
+@keyframes print {
+  0% {
+    opacity: 0;
+    transform: translateY(-26px) scale(0.96);
+  }
+
+  60% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.ticket {
+  @include m.flex(stretch, stretch, row);
+  width: 100%;
+  overflow: hidden;
+  background: c.$C_PAPER;
+  border-radius: 14px;
+  box-shadow: 0 10px 26px rgba(c.$C_RED_DEEP, 0.28);
+  animation: print 0.5s ease-out both;
+}
+
+.stub {
+  @include m.flex(center, center, column);
+  flex-shrink: 0;
+  width: 46px;
+  color: c.$C_PAPER;
+  background:
+    radial-gradient(circle at right, transparent 7px, c.$C_RED 7px) 0 0 / 100%
+      14px repeat-y,
+    linear-gradient(180deg, c.$C_RED 0%, c.$C_RED_DARK 100%);
+
+  .stubText {
+    font-size: 14px;
+    letter-spacing: 3px;
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+  }
+}
+
+.main {
+  @include m.flex(center, center, column);
+  row-gap: 8px;
+  width: 100%;
+  padding: 18px 16px;
+  border-left: 2px dashed c.$C_PAPER_LINE;
+}
+
+.label {
+  font-size: 14px;
+  color: c.$C_INK_SOFT;
+}
+
+.district {
+  padding: 2px 12px;
+  font-size: 14px;
+  color: c.$C_PAPER;
+  background-color: c.$C_TEAL_DARK;
+  border-radius: 999px;
+}
+
+.name {
+  font-size: 27px;
+  line-height: 1.25;
+  color: c.$C_RED_DARK;
+  text-align: center;
+}
+
+.address {
+  font-size: 13px;
+  line-height: 1.5;
+  color: c.$C_INK_SOFT;
+  text-align: center;
+}
+
+.actions {
+  @include m.flex(center, center, row);
+  column-gap: 8px;
+  width: 100%;
+  margin-top: 6px;
+}
+
+%pill {
+  @include m.flex(center, center, row);
+  flex: 1;
+  height: 44px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: transform 0.08s ease;
+
+  &:active {
+    transform: translateY(2px);
+  }
+}
+
+.mapBtn {
+  @extend %pill;
+  color: c.$C_PAPER;
+  text-decoration: none;
+  background: linear-gradient(180deg, c.$C_TEAL_DARK 0%, #185a52 100%);
+  box-shadow: 0 3px 0 #144a44;
+}
+
+.copyBtn {
+  @extend %pill;
+  color: c.$C_INK;
+  background: c.$C_PAPER_DARK;
+  border: 2px solid c.$C_PAPER_LINE;
+}
+
+.reset {
+  @include m.flex(center, center, row);
+  width: 100%;
+  height: 50px;
+  margin-top: 4px;
+  font-size: 19px;
+  color: c.$C_RED_DARK;
+  cursor: pointer;
+  background: linear-gradient(180deg, c.$C_GOLD_LIGHT 0%, c.$C_GOLD 100%);
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 0 c.$C_GOLD_DARK;
+  transition: transform 0.08s ease;
+
+  &:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 c.$C_GOLD_DARK;
+  }
+}

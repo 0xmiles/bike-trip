@@ -1,155 +1,97 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { LightBallIcon } from 'assets';
 import cx from 'clsx';
-import { BikeData } from 'interface/bikeData.interface';
-import { randomNumber } from 'utils';
-import * as xlsx from 'xlsx';
+import { Confetti, Reel, SignHeader, Ticket } from 'components';
+import { useStations } from 'hooks/useStations';
+import { randomNumber, type Station } from 'utils';
 
 import styles from './home.module.scss';
-import { filterLocation } from './utils';
 
-interface Targets {
-  first: string[];
-  second: string[];
-  third: string[];
-}
+type Phase = 'idle' | 'spinning' | 'result';
 
 const Home: React.FC = () => {
-  const [isActive, setIsActive] = useState<boolean>(false);
+  const { stations, status } = useStations();
 
-  const [data, setData] = useState<[string, string, string]>(['', '', '']);
-  const [targets, setTargets] = useState<Targets>({
-    first: ['따'],
-    second: ['랜'],
-    third: ['디'],
-  });
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [phase, setPhase] = useState<Phase>('idle');
+  const [winner, setWinner] = useState<Station | null>(null);
+  const [spinId, setSpinId] = useState(0);
+  const ticketRef = useRef<HTMLDivElement>(null);
 
-  const isSuccess = Boolean(data) && !isLoading;
-
-  const onClickStick = () => {
-    if (isActive && isLoading) {
+  const spin = useCallback(() => {
+    if (status !== 'ready' || phase === 'spinning') {
       return;
     }
-    if (isActive) {
-      setIsLoading(true);
-      setIsActive(false);
-    } else {
-      setIsActive(true);
+    navigator.vibrate?.(20);
+    setWinner(stations[randomNumber(0, stations.length - 1)]);
+    setSpinId((id) => id + 1);
+    setPhase('spinning');
+  }, [status, phase, stations]);
 
-      setTimeout(() => {
-        const index = randomNumber(0, targets.first.length - 1);
-
-        setData([
-          targets.first[index],
-          targets.second[index],
-          targets.third[index],
-        ]);
-        setIsLoading(false);
-      }, 2_000);
-    }
-  };
+  const onSettle = useCallback(() => {
+    setPhase('result');
+  }, []);
 
   useEffect(() => {
-    // xlsx.set_fs(fs);
-    fetch('defend.xlsx', {})
-      .then((data) => data.arrayBuffer())
-      .then((data) => {
-        const excelFile = xlsx.read(data, {
-          type: 'binary',
-        }) as any;
-
-        const sheetName = excelFile.SheetNames[0];
-
-        const firstSheet = excelFile.Sheets[sheetName];
-        const jsonData = xlsx.utils
-          .sheet_to_json<BikeData>(firstSheet, {
-            defval: '',
-          })
-          .map((data: any) => data['__EMPTY_3'] as string);
-        jsonData
-          .map((data) => filterLocation(data))
-          .forEach((location) =>
-            setTargets((prev) => {
-              return {
-                first: [...prev.first, location[0] ?? ''],
-                second: [...prev.second, location[1] ?? ''],
-                third: [
-                  ...prev.third,
-                  location.length > 3
-                    ? location.slice(2).join(',')
-                    : location[2] ?? '',
-                ],
-              };
-            }),
-          );
+    if (phase === 'result') {
+      ticketRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
       });
-  }, []);
+    }
+  }, [phase, spinId]);
 
   return (
     <section className={styles.wrapper}>
-      <div className={styles.title}>
-        <p>
-          <span className={styles.highlight}>따</span>
-          릉이
-        </p>
-        <p>
-          <span className={styles.highlight}>랜</span>덤
-        </p>
-        <p>
-          <span className={styles.highlight}>디</span>펜스
-        </p>
+      <Confetti show={phase === 'result'} key={spinId} />
+
+      <SignHeader />
+
+      <div
+        className={cx(styles.cabinet, { [styles.live]: phase === 'spinning' })}
+      >
+        <div className={styles.cabinetTop}>
+          <span className={styles.coinSlot} />
+          <span className={styles.cabinetLabel}>LUCKY STATION</span>
+          <span className={styles.coinSlot} />
+        </div>
+
+        <div className={styles.screen}>
+          <Reel
+            stations={stations}
+            winner={winner}
+            spinId={spinId}
+            spinning={phase === 'spinning'}
+            onSettle={onSettle}
+          />
+        </div>
+
+        <div
+          className={cx(styles.lever, {
+            [styles.leverDown]: phase === 'spinning',
+          })}
+        >
+          <span className={styles.leverKnob} />
+        </div>
       </div>
-      <div className={styles.rolletWrapper}>
-        <div className={styles.top}>
-          <LightBallIcon />
-          <LightBallIcon />
-          <LightBallIcon />
-        </div>
-        <div className={styles.body}>
-          <p>따랜디</p>
-          <div
-            className={cx(styles.rolesWrapper, {
-              [styles.isActive]: isActive && !isSuccess,
-            })}
-          >
-            <div className={styles.role}>
-              <div className={styles.container}>
-                {isSuccess ? (
-                  <p className={styles.isSuccess}>{data[0]}</p>
-                ) : (
-                  targets.first.map((text, index) => <p key={index}>{text}</p>)
-                )}
-              </div>
-            </div>
-            <div className={styles.role}>
-              <div className={styles.container}>
-                {isSuccess ? (
-                  <p className={styles.isSuccess}>{data[1]}</p>
-                ) : (
-                  targets.second.map((text, index) => <p key={index}>{text}</p>)
-                )}
-              </div>
-            </div>
-            <div className={styles.role}>
-              <div className={styles.container}>
-                {isSuccess ? (
-                  <p className={styles.isSuccess}>{data[2]}</p>
-                ) : (
-                  targets.third.map((text, index) => <p key={index}>{text}</p>)
-                )}
-              </div>
-            </div>
-          </div>
-          <div
-            className={cx(styles.stick, { [styles.isActive]: isActive })}
-            onClick={onClickStick}
-          >
-            <div className={styles.handle} />
-          </div>
-        </div>
-        <div className={styles.bottom} />
+
+      {phase !== 'result' && (
+        <button
+          className={styles.spinBtn}
+          type="button"
+          onClick={spin}
+          disabled={status !== 'ready' || phase === 'spinning'}
+        >
+          {status === 'loading' && '대여소 불러오는 중…'}
+          {status === 'error' && '데이터를 불러오지 못했어요'}
+          {status === 'ready' &&
+            (phase === 'spinning' ? '🌀 돌리는 중…' : '🎰 돌리기!')}
+        </button>
+      )}
+
+      <div ref={ticketRef} className={styles.ticketSlot}>
+        {phase === 'result' && winner && (
+          <Ticket station={winner} onReset={spin} />
+        )}
       </div>
     </section>
   );

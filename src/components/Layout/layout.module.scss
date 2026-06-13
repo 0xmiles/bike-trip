@@ -3,11 +3,19 @@
 
 .wrapper {
   @include m.flex(flex-start, center, column);
-  height: 100vh;
-  background-color: c.$C_BACKGROUND;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  color: c.$C_INK;
+  background-color: c.$C_PAPER;
+  background-image:
+    radial-gradient(rgba(c.$C_RED, 0.06) 1.4px, transparent 1.5px),
+    radial-gradient(rgba(c.$C_TEAL, 0.05) 1.4px, transparent 1.5px);
+  background-position: 0 0, 11px 11px;
+  background-size: 22px 22px;
 
   > main {
+    @include m.flex(flex-start, center, column);
     width: 100%;
-    max-width: 720px;
+    max-width: 480px;
   }
 }

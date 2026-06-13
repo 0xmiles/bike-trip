@@ -1,0 +1,67 @@
+@use 'src/styles/constants' as c;
+@use 'src/styles/mixins' as m;
+
+.sign {
+  @include m.flex(center, center, column);
+  row-gap: 8px;
+  width: 100%;
+  padding: 10px 14px;
+  background: linear-gradient(180deg, c.$C_RED 0%, c.$C_RED_DARK 100%);
+  border: 4px solid c.$C_GOLD;
+  border-radius: 18px;
+  box-shadow:
+    0 6px 0 c.$C_RED_DEEP,
+    0 10px 22px rgba(c.$C_RED_DEEP, 0.4);
+}
+
+.bulbs {
+  @include m.flex(space-between, center, row);
+  width: 100%;
+}
+
+.bulb {
+  width: 9px;
+  height: 9px;
+  background: radial-gradient(circle at 35% 30%, #fff7d6, c.$C_GOLD 70%);
+  border-radius: 50%;
+  box-shadow: 0 0 6px c.$C_GOLD_LIGHT;
+  animation: glow 1.2s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.35;
+    box-shadow: 0 0 2px c.$C_GOLD;
+  }
+}
+
+.body {
+  @include m.flex(center, center, column);
+  row-gap: 2px;
+  text-align: center;
+}
+
+.kicker {
+  font-size: 13px;
+  color: c.$C_GOLD_LIGHT;
+  letter-spacing: 2px;
+}
+
+.title {
+  font-size: 44px;
+  color: c.$C_PAPER;
+  letter-spacing: 6px;
+  text-shadow:
+    0 2px 0 c.$C_RED_DEEP,
+    0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.sub {
+  font-size: 14px;
+  color: c.$C_GOLD_LIGHT;
+}

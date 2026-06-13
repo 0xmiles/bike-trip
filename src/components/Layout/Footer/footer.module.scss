@@ -2,8 +2,9 @@
 @use 'src/styles/mixins' as m;
 
 .wrapper {
-  @include m.fontB4;
-  position: fixed;
-  bottom: 20px;
-  color: c.$C_GRAY_80;
+  @include m.flex(center, center, row);
+  width: 100%;
+  padding: 16px 0 calc(20px + env(safe-area-inset-bottom));
+  font-size: 13px;
+  color: c.$C_INK_SOFT;
 }

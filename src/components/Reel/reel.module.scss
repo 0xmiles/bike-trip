@@ -1,0 +1,118 @@
+@use 'src/styles/constants' as c;
+@use 'src/styles/mixins' as m;
+
+$item-h: 76px;
+$visible: 3;
+
+.window {
+  position: relative;
+  width: 100%;
+  height: $item-h * $visible;
+  overflow: hidden;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(c.$C_TEAL, 0.06) 0,
+      rgba(c.$C_TEAL, 0.06) 1px,
+      transparent 1px,
+      transparent 4px
+    ),
+    linear-gradient(180deg, #fffdf6 0%, #fff6e2 100%);
+  border-radius: 10px;
+  box-shadow:
+    inset 0 6px 14px rgba(c.$C_RED_DEEP, 0.28),
+    inset 0 -6px 14px rgba(c.$C_RED_DEEP, 0.28);
+}
+
+.fadeTop,
+.fadeBottom {
+  position: absolute;
+  right: 0;
+  left: 0;
+  z-index: 3;
+  height: $item-h;
+  pointer-events: none;
+}
+
+.fadeTop {
+  top: 0;
+  background: linear-gradient(180deg, #fff7e6 8%, rgba(255, 247, 230, 0) 100%);
+}
+
+.fadeBottom {
+  bottom: 0;
+  background: linear-gradient(0deg, #fff2d6 8%, rgba(255, 242, 214, 0) 100%);
+}
+
+.line {
+  position: absolute;
+  top: $item-h;
+  right: 6px;
+  left: 6px;
+  z-index: 4;
+  height: $item-h;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(c.$C_GOLD, 0.16) 0%,
+    rgba(c.$C_GOLD, 0.28) 50%,
+    rgba(c.$C_GOLD, 0.16) 100%
+  );
+  border-top: 3px dashed c.$C_RED;
+  border-bottom: 3px dashed c.$C_RED;
+}
+
+.chevronLeft,
+.chevronRight {
+  position: absolute;
+  top: 50%;
+  font-size: 20px;
+  color: c.$C_RED;
+  transform: translateY(-50%);
+  animation: blink 0.8s steps(2) infinite;
+}
+
+.chevronLeft {
+  left: -2px;
+}
+
+.chevronRight {
+  right: -2px;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.strip {
+  position: relative;
+  z-index: 2;
+  will-change: transform;
+}
+
+.row {
+  @include m.flex(center, center, column);
+  row-gap: 4px;
+  width: 100%;
+  border-bottom: 1px solid c.$C_PAPER_LINE;
+
+  .district {
+    padding: 1px 10px;
+    font-size: 13px;
+    color: c.$C_PAPER;
+    background-color: c.$C_TEAL_DARK;
+    border-radius: 999px;
+  }
+
+  .name {
+    max-width: 92%;
+    overflow: hidden;
+    font-size: 21px;
+    color: c.$C_INK;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

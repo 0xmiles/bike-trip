@@ -1,195 +1,133 @@
 @use 'src/styles/constants' as c;
 @use 'src/styles/mixins' as m;
 
-@keyframes pop {
-  0%,
-  40%,
-  100% {
-    transform: translateY(0);
-  }
-
-  20% {
-    transform: translateY(-8px);
-  }
-}
-
-@keyframes roll {
-  0% {
-    transform: translateY(0);
-  }
-
-  100% {
-    transform: translateY(-1000px);
-  }
-}
-
-@keyframes drop {
-  0% {
-    transform: translateY(-1000px);
-  }
-
-  100% {
-    transform: translateY(0);
-  }
-}
-
 .wrapper {
-  @include m.flex(center, center, column);
-  row-gap: 32px;
-  height: 100vh;
+  @include m.flex(flex-start, center, column);
+  row-gap: 22px;
+  width: 100%;
+  min-height: 100dvh;
+  padding: 28px 18px calc(40px + env(safe-area-inset-bottom));
+}
 
-  .title {
-    color: c.$C_PRIMARY;
+// ===== 슬롯 캐비닛 =====
+.cabinet {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  padding: 14px 16px 18px;
+  background: linear-gradient(180deg, c.$C_RED 0%, c.$C_RED_DARK 100%);
+  border: 5px solid c.$C_GOLD;
+  border-radius: 24px;
+  box-shadow:
+    0 8px 0 c.$C_RED_DEEP,
+    0 16px 30px rgba(c.$C_RED_DEEP, 0.45);
 
-    > p {
-      font-size: 40px;
-      counter-increment: count;
-      @for $i from 1 through 3 {
-        &:nth-of-type(#{$i}) {
-          .highlight {
-            animation: pop 1s infinite;
-            animation-delay: calc(0.1s * #{$i});
-          }
-        }
-      }
-    }
+  &.live {
+    animation: jiggle 0.32s ease-in-out infinite;
+  }
+}
 
-    > p + p {
-      margin-top: 8px;
-    }
-
-    .highlight {
-      display: inline-block;
-      margin-right: 4px;
-      font-size: 48px;
-      $count: counter(count);
-    }
+@keyframes jiggle {
+  0%,
+  100% {
+    transform: translateX(0);
   }
 
-  .rolletWrapper {
-    @include m.flex(flex-start, center, column);
-    width: 300px;
-
-    .top {
-      @include m.flex(center, center, row);
-      column-gap: 32px;
-      width: 100%;
-      height: 50px;
-      background-color: c.$C_PRIMARY;
-      border-bottom-right-radius: 6px;
-      border-bottom-left-radius: 6px;
-    }
-
-    .body {
-      @include m.flex(center, center, column);
-      position: relative;
-      z-index: 10;
-      width: 85%;
-      height: 200px;
-      background-color: c.$C_PRIMARY;
-      // border-right: 6px solid c.$C_PRIMARY;
-      // border-left: 6px solid c.$C_PRIMARY;
-
-      > p {
-        @include m.fontB1;
-        position: absolute;
-        top: 12px;
-        left: 50%;
-        color: c.$C_WHITE;
-        letter-spacing: 12px;
-        transform: translateX(-45%);
-      }
-
-      .rolesWrapper {
-        @include m.flex(space-between);
-        width: 95%;
-        height: 65%;
-        background-color: c.$C_WHITE;
-
-        .role {
-          @include m.flex(flex-start, flex-start, column);
-          @include m.fontH3;
-          flex: 1 0 80px;
-          height: 100%;
-          overflow: hidden;
-          color: c.$C_PRIMARY;
-
-          .container {
-            flex-shrink: 0;
-            width: 100%;
-
-            &:not(:has(.isSuccess)) {
-              transform: translateY(20px);
-            }
-
-            &:has(.isSuccess) {
-              transform: translateY(24px);
-            }
-
-            > p {
-              @include m.flex(center, center, column);
-              width: 100%;
-              height: 120px;
-              padding-bottom: 20px;
-              font-size: 20px;
-              text-align: center;
-            }
-          }
-        }
-
-        .role:not(:last-child) {
-          border-right: 4px solid c.$C_PRIMARY;
-        }
-
-        &.isActive {
-          .role {
-            @for $i from 1 through 3 {
-              &:nth-of-type(#{$i}) > .container {
-                animation: roll 0.2s linear infinite;
-                animation-delay: calc(0.2s * #{$i});
-              }
-            }
-          }
-        }
-      }
-
-      .stick {
-        position: absolute;
-        right: 0;
-        z-index: 0;
-        width: 8px;
-        height: 70px;
-        cursor: pointer;
-        background-color: c.$C_BLACK;
-        border-radius: 0 0 6px 6px;
-        transition: transform 0.5s linear;
-        transform: rotate(45deg);
-        transform-origin: bottom right;
-
-        .handle {
-          position: absolute;
-          top: -18px;
-          left: 50%;
-          width: 20px;
-          height: 20px;
-          background-color: red;
-          border-radius: 50%;
-          transform: translateX(-50%);
-        }
-
-        &.isActive {
-          user-select: none;
-          transform: rotate(135deg) translateY(10px);
-        }
-      }
-    }
-
-    .bottom {
-      width: 100%;
-      height: 40px;
-      background-color: c.$C_PRIMARY;
-      border-top-left-radius: 6px;
-      border-top-right-radius: 6px;
-    }
+  25% {
+    transform: translateX(-2px);
   }
+
+  75% {
+    transform: translateX(2px);
+  }
+}
+
+.cabinetTop {
+  @include m.flex(space-between, center, row);
+  margin-bottom: 12px;
+}
+
+.cabinetLabel {
+  font-size: 15px;
+  color: c.$C_GOLD_LIGHT;
+  letter-spacing: 3px;
+}
+
+.coinSlot {
+  width: 26px;
+  height: 8px;
+  background-color: c.$C_RED_DEEP;
+  border: 1px solid c.$C_GOLD_DARK;
+  border-radius: 4px;
+}
+
+.screen {
+  padding: 8px;
+  background: c.$C_RED_DEEP;
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 3px c.$C_GOLD_DARK;
+}
+
+// ===== 우측 레버 =====
+.lever {
+  position: absolute;
+  top: 44px;
+  right: -16px;
+  width: 10px;
+  height: 70px;
+  background: linear-gradient(90deg, #9a9a9a, #d8d8d8, #9a9a9a);
+  border-radius: 6px;
+  transform-origin: bottom center;
+  transition: transform 0.25s ease;
+
+  &.leverDown {
+    transform: rotate(18deg) translateY(8px);
+  }
+}
+
+.leverKnob {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  width: 22px;
+  height: 22px;
+  background: radial-gradient(circle at 35% 30%, #ff7a7a, c.$C_RED 65%);
+  border: 2px solid c.$C_GOLD;
+  border-radius: 50%;
+  transform: translateX(-50%);
+}
+
+// ===== 메인 스핀 버튼 =====
+.spinBtn {
+  width: 100%;
+  max-width: 360px;
+  height: 64px;
+  font-size: 24px;
+  color: c.$C_RED_DARK;
+  cursor: pointer;
+  background: linear-gradient(180deg, c.$C_GOLD_LIGHT 0%, c.$C_GOLD 100%);
+  border: 4px solid c.$C_RED;
+  border-radius: 18px;
+  box-shadow: 0 6px 0 c.$C_GOLD_DARK;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+
+  &:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 c.$C_GOLD_DARK;
+  }
+
+  &:disabled {
+    color: c.$C_INK_SOFT;
+    cursor: default;
+    background: c.$C_PAPER_DARK;
+    border-color: c.$C_PAPER_LINE;
+    box-shadow: 0 6px 0 c.$C_PAPER_LINE;
+  }
+}
+
+// ===== 티켓 출력 슬롯 =====
+.ticketSlot {
+  @include m.flex(flex-start, center, row);
+  width: 100%;
+  max-width: 360px;
 }

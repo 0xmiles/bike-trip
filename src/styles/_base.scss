@@ -38,6 +38,27 @@ input:-webkit-autofill:active {
   outline: none;
 }
 
+// 키보드 포커스는 다시 보이게 (마우스/터치는 영향 없음)
+button:focus-visible,
+a:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid #ffb703;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+// 모션 민감 사용자: 애니메이션/트랜지션 무력화
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
 a {
   text-decoration: underline;
   font-family: 'Spoqa Hans Sans Neo', 'Spoqa Han Sans';
